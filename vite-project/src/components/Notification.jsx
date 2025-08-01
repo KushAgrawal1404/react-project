@@ -28,10 +28,5 @@ function Notification({ message, onClose }) {
   );
 }
 
-// Define the expected prop types for the Notification component for type-checking.
-Notification.propTypes = {
-  message: PropTypes.string,
-  onClose: PropTypes.func.isRequired,
-};
 
 export default Notification; 

@@ -47,21 +47,4 @@ function ProductItem({ product, onAddToCart }) {
   );
 }
 
-// Define the expected prop types for the ProductItem component for type-checking.
-ProductItem.propTypes = {
-  /**
-   * The product object with its details.
-   */
-  product: PropTypes.shape({
-    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    title: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    thumbnail: PropTypes.string.isRequired,
-  }).isRequired,
-  /**
-   * An optional callback function that is called when the "Add to Cart" button is clicked.
-   */
-  onAddToCart: PropTypes.func,
-};
-
 export default ProductItem; 

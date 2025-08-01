@@ -1,4 +1,6 @@
-# React E-commerce Store: 
+# Github Link: https://github.com/KushAgrawal1404/react-project
+
+# React E-commerce Store: ShoppyGlobe
 
 This is a simple e-commerce application built with React, Redux for state management, and React Router for navigation. The project is set up using Vite for a fast development experience.
 
@@ -40,3 +42,5 @@ Make sure you have [Node.js](https://nodejs.org/) and `npm` (or `yarn`) installe
     Once the server is running, open your web browser and navigate to `http://localhost:5173` (or the address shown in your terminal).
 
 That's it! You should now have the e-commerce application running locally.
+
+# Github Link: https://github.com/KushAgrawal1404/react-project
