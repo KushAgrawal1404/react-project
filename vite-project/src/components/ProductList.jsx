@@ -4,7 +4,7 @@ import ProductItem from './ProductItem';
 
 /**
  * ProductList component fetches, displays, and filters a list of products.
- * It includes a search bar to filter products by title.
+ * It includes a search bar to filter products by name.
  */
 function ProductList({ onAddToCart }) {
   // Fetch products, loading state, and error state from the custom useProducts hook.
@@ -15,7 +15,7 @@ function ProductList({ onAddToCart }) {
   // Filter the products based on the search input.
   // The search is case-insensitive.
   const filtered = products.filter(p =>
-    p.title.toLowerCase().includes(search.toLowerCase())
+    p.name.toLowerCase().includes(search.toLowerCase())
   );
 
   // Display a loading message while products are being fetched.
@@ -35,7 +35,7 @@ function ProductList({ onAddToCart }) {
       <div className="product-list">
         {/* Map over the filtered products and render a ProductItem for each one */}
         {filtered.map(product => (
-          <ProductItem key={product.id} product={product} onAddToCart={onAddToCart} />
+          <ProductItem key={product._id} product={product} onAddToCart={onAddToCart} />
         ))}
       </div>
     </div>

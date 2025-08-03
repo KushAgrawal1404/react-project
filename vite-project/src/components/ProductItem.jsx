@@ -1,44 +1,41 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
-import { addItem } from '../redux/cartSlice';
 import { Link } from 'react-router-dom';
+import { useCartContext } from '../contexts/CartContext';
+import { useAuth } from '../contexts/AuthContext';
 
 /**
  * ProductItem component displays a single product's information
  * and provides an "Add to Cart" button.
  */
 function ProductItem({ product, onAddToCart }) {
-  // Get the dispatch function to send actions to the Redux store.
-  const dispatch = useDispatch();
+  const { addToCart } = useCartContext();
+  const { isAuthenticated } = useAuth();
 
   /**
    * Handles the "Add to Cart" button click.
-   * Dispatches the `addItem` action to the Redux store and
-   * calls the `onAddToCart` callback if it exists.
+   * Adds the item to the cart using the backend API.
    */
-  const handleAdd = () => {
-    // Dispatch the action to add the item to the cart.
-    dispatch(addItem({
-      id: product.id,
-      title: product.title,
-      price: product.price,
-      thumbnail: product.thumbnail,
-      quantity: 1,
-    }));
+  const handleAdd = async () => {
+    if (!isAuthenticated) {
+      if (onAddToCart) {
+        onAddToCart('Please login to add items to cart');
+      }
+      return;
+    }
 
-    // If an onAddToCart callback is provided, call it with a message.
-    if (onAddToCart) {
-      onAddToCart(`Added "${product.title}" to cart!`);
+    const success = await addToCart(product._id, 1);
+    if (success && onAddToCart) {
+      onAddToCart(`Added "${product.name}" to cart!`);
     }
   };
 
   return (
     <div className="product-item">
       {/* Link to the detailed product page */}
-      <Link to={`/product/${product.id}`} className="product-title-link">
-        <img src={product.thumbnail} alt={product.title} />
-        <h3>{product.title}</h3>
+      <Link to={`/product/${product._id}`} className="product-title-link">
+        <img src={product.image} alt={product.name} />
+        <h3>{product.name}</h3>
       </Link>
       <p>${product.price}</p>
       {/* Button to add the product to the cart */}

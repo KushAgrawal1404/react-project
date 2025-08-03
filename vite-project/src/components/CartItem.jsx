@@ -1,26 +1,54 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
-import { removeItem, updateQuantity } from '../redux/cartSlice';
+import { useCartContext } from '../contexts/CartContext';
 
 // This component represents a single item within the shopping cart.
 // It displays the item's details and provides controls to update its quantity or remove it.
-function CartItem({ item }) {
-  // Get the dispatch function from the Redux store to send actions.
-  const dispatch = useDispatch();
+function CartItem({ item, onRemove }) {
+  const { updateQuantity } = useCartContext();
+  const [localQuantity, setLocalQuantity] = useState(item.quantity);
+  const [isUpdating, setIsUpdating] = useState(false);
 
-  // Handler to dispatch the removeItem action when the remove button is clicked.
-  const handleRemove = () => dispatch(removeItem(item.id));
+  // Debounced quantity update
+  const debouncedUpdate = useCallback(
+    (() => {
+      let timeoutId;
+      return (productId, quantity) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(async () => {
+          setIsUpdating(true);
+          await updateQuantity(productId, quantity);
+          setIsUpdating(false);
+        }, 300); // 300ms delay
+      };
+    })(),
+    [updateQuantity]
+  );
 
-  // Handler for the quantity input field.
-  const handleChange = e => {
-    // Parse the input value to an integer.
-    const qty = parseInt(e.target.value, 10);
-    // Only dispatch the updateQuantity action if the new quantity is a positive number.
-    if (qty > 0) {
-      dispatch(updateQuantity({ id: item.id, quantity: qty }));
+  // Handler to remove the item from cart
+  const handleRemove = async () => {
+    if (onRemove) {
+      onRemove();
+    } else {
+      await updateQuantity(item.id, 0); // Set quantity to 0 to remove
     }
   };
+
+  // Handler for the quantity input field.
+  const handleChange = (e) => {
+    const qty = parseInt(e.target.value, 10);
+    setLocalQuantity(qty);
+    
+    // Only update if the new quantity is a positive number.
+    if (qty > 0) {
+      debouncedUpdate(item.id, qty);
+    }
+  };
+
+  // Update local quantity when item quantity changes from parent
+  React.useEffect(() => {
+    setLocalQuantity(item.quantity);
+  }, [item.quantity]);
 
   return (
     // The main container for a single cart item.
@@ -37,10 +65,14 @@ function CartItem({ item }) {
           <input
             type="number"
             min="1"
-            value={item.quantity}
+            value={localQuantity}
             onChange={handleChange}
+            disabled={isUpdating}
+            style={{ opacity: isUpdating ? 0.7 : 1 }}
           />
-          <button onClick={handleRemove}>Remove</button>
+          <button onClick={handleRemove} disabled={isUpdating}>
+            Remove
+          </button>
         </div>
       </div>
     </div>

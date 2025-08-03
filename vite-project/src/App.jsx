@@ -2,6 +2,8 @@ import React, { Suspense, lazy, useState, useCallback } from 'react';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import store from './redux/store';
+import { AuthProvider } from './contexts/AuthContext';
+import { CartProvider } from './contexts/CartContext';
 import Header from './components/Header';
 import Notification from './components/Notification';
 
@@ -11,6 +13,7 @@ const Home = lazy(() => import('./components/Home'));
 const ProductDetail = lazy(() => import('./components/ProductDetail'));
 const CartPage = lazy(() => import('./components/CartPage'));
 const Checkout = lazy(() => import('./components/Checkout'));
+const Login = lazy(() => import('./components/Login'));
 const NotFound = lazy(() => import('./components/NotFound'));
 
 function App() {
@@ -29,29 +32,37 @@ function App() {
   return (
     // Provider makes the Redux store available to any nested components that need to access the Redux store.
     <Provider store={store}>
-      {/* Router component to enable routing in the application. */}
-      <Router>
-        {/* The Header component will be displayed on all pages. */}
-        <Header />
-        {/* The Notification component is displayed when there's a message. */}
-        <Notification message={notification} onClose={handleCloseNotification} />
-        {/* Suspense is used for lazy-loaded components, showing a fallback UI while they load. */}
-        <Suspense fallback={<div>Loading...</div>}>
-          {/* Routes component defines the different routes in the application. */}
-          <Routes>
-            {/* Route for the home page. It passes the showNotification function as a prop. */}
-            <Route path="/" element={<Home onAddToCart={showNotification} />} />
-            {/* Route for the product detail page, with a dynamic 'id' parameter. */}
-            <Route path="/product/:id" element={<ProductDetail onAddToCart={showNotification} />} />
-            {/* Route for the cart page. */}
-            <Route path="/cart" element={<CartPage />} />
-            {/* Route for the checkout page. */}
-            <Route path="/checkout" element={<Checkout />} />
-            {/* A catch-all route for any other path, showing a "Not Found" page. */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
-      </Router>
+      {/* AuthProvider makes authentication context available throughout the app */}
+      <AuthProvider>
+        {/* CartProvider provides shared cart state across the application */}
+        <CartProvider>
+          {/* Router component to enable routing in the application. */}
+          <Router>
+            {/* The Header component will be displayed on all pages. */}
+            <Header />
+            {/* The Notification component is displayed when there's a message. */}
+            <Notification message={notification} onClose={handleCloseNotification} />
+            {/* Suspense is used for lazy-loaded components, showing a fallback UI while they load. */}
+            <Suspense fallback={<div>Loading...</div>}>
+              {/* Routes component defines the different routes in the application. */}
+              <Routes>
+                {/* Route for the home page. It passes the showNotification function as a prop. */}
+                <Route path="/" element={<Home onAddToCart={showNotification} />} />
+                {/* Route for the product detail page, with a dynamic 'id' parameter. */}
+                <Route path="/product/:id" element={<ProductDetail onAddToCart={showNotification} />} />
+                {/* Route for the cart page. */}
+                <Route path="/cart" element={<CartPage />} />
+                {/* Route for the checkout page. */}
+                <Route path="/checkout" element={<Checkout />} />
+                {/* Route for the login/register page. */}
+                <Route path="/login" element={<Login />} />
+                {/* A catch-all route for any other path, showing a "Not Found" page. */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </Router>
+        </CartProvider>
+      </AuthProvider>
     </Provider>
   );
 }

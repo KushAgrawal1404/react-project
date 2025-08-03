@@ -6,7 +6,17 @@ import Cart from './Cart';
  * It simply renders the Cart component, acting as a route-level container.
  */
 function CartPage() {
-  return <Cart />;
+  try {
+    return <Cart />;
+  } catch (error) {
+    return (
+      <div style={{ padding: '2rem', textAlign: 'center' }}>
+        <h2>Error Loading Cart Page</h2>
+        <p>Something went wrong while loading the cart.</p>
+        <p>Error: {error.message}</p>
+      </div>
+    );
+  }
 }
 
 export default CartPage; 

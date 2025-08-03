@@ -1,43 +1,122 @@
-# React E-commerce Store: 
+# Github Link: https://github.com/KushAgrawal1404/react-project
 
-This is a simple e-commerce application built with React, Redux for state management, and React Router for navigation. The project is set up using Vite for a fast development experience.
+# ShoppyGlobe E-commerce App with Node.js Backend 
 
-## Features
+A full-stack e-commerce application built with React frontend and Node.js/Express backend with MongoDB.
 
-- Product listing page with search functionality.
-- Detailed product view page.
-- Shopping cart with ability to add, update, and remove items.
-- A checkout page to summarize the order.
-- Lazy loading for components to improve initial load performance.
-- Centralized state management with Redux Toolkit.
+## 🚀 Features
 
-## Project Setup and Installation
+- **User Authentication**: Register and login with JWT
+- **Product Catalog**: Browse products with details
+- **Shopping Cart**: Add, update, and remove items
+- **User-specific Carts**: Persistent cart data per user
+- **Checkout Process**: Review cart and proceed to checkout
+- **Responsive Design**: Works on desktop and mobile
 
-Follow these instructions to get the project up and running on your local machine.
+## 📋 Prerequisites
 
-### Prerequisites
+- **Node.js** (v16 or higher)
+- **MongoDB** (installed and running locally)
+- **Git** (optional)
 
-Make sure you have [Node.js](https://nodejs.org/) and `npm` (or `yarn`) installed on your system.
+## 🛠️ Installation
 
-### Instructions
+### 1. Clone/Extract the Project
+```bash 
+# If using git
+git clone <repository-url>
+cd react-project
 
-1.  **Navigate to the project directory:**
-    cd vite-project
+# Or extract the zip file
+# Navigate to the extracted folder
+```
 
-2.  **Install dependencies:**
-    Run the following command to install all the necessary packages.
-    npm install
-    npm install @reduxjs/toolkit
-    npm install react-redux
-    npm install react-router-dom
+### 2. Install Dependencies
 
+**Backend:**
+```bash
+cd backend
+npm install
+```
 
-3.  **Run the development server:**
-    To start the application in development mode, run:
-    npm run dev
+**Frontend:**
+```bash
+cd vite-project
+npm install
+```
 
-4.  **Open in browser:**
-    Once the server is running, open your web browser and navigate to `http://localhost:5173` (or the address shown in your terminal).
+### 3. Environment Setup(If not already done)
 
-That's it! You should now have the e-commerce application running locally.
+Create `backend/config.env`:
+```env
+PORT=5000
+MONGODB_URI=mongodb://localhost:27017/ecommerce
+JWT_SECRET=your-super-secret-jwt-key-here
+JWT_EXPIRES_IN=7d
+```
+
+### 4. Database Setup
+
+**Start MongoDB:**
+```bash
+# MongoDB should be running on localhost:27017
+# If not installed, follow MongoDB installation guide
+```
+
+**Seed the database:**
+```bash
+cd backend
+node seed.js
+```
+
+### 5. Start the Application
+
+**Terminal 1 - Backend Server:**
+```bash
+cd backend
+npm run dev
+```
+*Server runs on http://localhost:5000*
+
+**Terminal 2 - Frontend App:**
+```bash
+cd vite-project
+npm run dev
+```
+*App runs on http://localhost:5173*
+
+## 🎯 Usage
+
+1. **Register/Login**: Create an account or login
+2. **Browse Products**: View product catalog
+3. **Add to Cart**: Click "Add to Cart" on products
+4. **Manage Cart**: View cart, update quantities, remove items
+5. **Checkout**: Review cart and proceed to checkout
+
+## 🔧 API Endpoints
+
+### Authentication
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+
+### Products
+- `GET /api/products` - Get all products
+- `GET /api/products/:id` - Get single product
+
+### Cart (Protected Routes)
+- `GET /api/cart` - Get user's cart
+- `POST /api/cart` - Add product to cart
+- `PUT /api/cart/:productId` - Update cart item quantity
+- `DELETE /api/cart/:productId` - Remove item from cart
+
+## 🛡️ Security Features
+
+- **JWT Authentication**: Secure user sessions
+- **Protected Routes**: Cart operations require authentication
+- **Input Validation**: Server-side validation for all inputs
+- **Error Handling**: Comprehensive error responses
+
+**Happy Shopping! 🛒**
+
+# Github Link: https://github.com/KushAgrawal1404/react-project
 

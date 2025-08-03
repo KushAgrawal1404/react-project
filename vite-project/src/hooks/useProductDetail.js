@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
+import { productsAPI } from '../services/api';
 
 /**
- * A custom hook for fetching the details of a single product.
+ * A custom hook for fetching the details of a single product from our backend.
  */
 export default function useProductDetail(id) {
   // State to store the product data. Initialized to null.
@@ -16,20 +17,22 @@ export default function useProductDetail(id) {
   useEffect(() => {
     // If there's no ID, don't attempt to fetch.
     if (!id) return;
+    
     // Set loading to true before starting the fetch.
     setLoading(true);
-    // Fetch data from the dummyJSON API using the provided product ID.
-    fetch(`https://dummyjson.com/products/${id}`)
-      .then(res => {
-        // If the response is not ok (e.g., 404 Not Found), throw an error.
-        if (!res.ok) throw new Error('Failed to fetch');
-        // Otherwise, parse the JSON response.
-        return res.json();
+    setError(null);
+    
+    // Fetch data from our backend API using the provided product ID.
+    productsAPI.getById(id)
+      .then(data => {
+        // If the fetch is successful, update the product state with the received data.
+        setProduct(data.data);
       })
-      // If the fetch is successful, update the product state with the received data.
-      .then(data => setProduct(data))
       // If any error occurs during the fetch, update the error state.
-      .catch(e => setError(e.message))
+      .catch(e => {
+        console.error('Error fetching product:', e);
+        setError(e.message);
+      })
       // Finally, set loading to false, regardless of success or failure.
       .finally(() => setLoading(false));
   }, [id]); // The effect depends on the 'id' and will re-run if it changes.

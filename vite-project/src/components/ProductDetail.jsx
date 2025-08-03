@@ -1,99 +1,62 @@
 import React from 'react';
-import { useParams, Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
+import { useParams } from 'react-router-dom';
 import useProductDetail from '../hooks/useProductDetail';
-import { useDispatch } from 'react-redux';
-import { addItem } from '../redux/cartSlice';
+import { useCartContext } from '../contexts/CartContext';
+import { useAuth } from '../contexts/AuthContext';
 import '../ProductDetail.css';
 
 /**
- * ProductDetail component displays the details of a single product.
- * It fetches the product data based on the ID from the URL and allows
- * the user to add the product to the cart.
+ * ProductDetail component displays detailed information about a specific product.
+ * It shows the product image, title, description, price, and an "Add to Cart" button.
  */
 function ProductDetail({ onAddToCart }) {
-  // Get the product ID from the URL parameters.
   const { id } = useParams();
-  // Fetch product details using a custom hook.
   const { product, loading, error } = useProductDetail(id);
-  // Get the dispatch function to send actions to the Redux store.
-  const dispatch = useDispatch();
+  const { addToCart } = useCartContext();
+  const { isAuthenticated } = useAuth();
 
-  // Display a loading message while the product data is being fetched.
-  if (loading) return <div>Loading product...</div>;
-  // Display a styled error message if fetching fails.
-  if (error) {
-    return (
-      <div className="product-not-found-container">
-        <div className="product-not-found-content">
-          <h1 className="product-not-found-title">Oops!</h1>
-          <h2 className="product-not-found-subtitle">An Error Occurred</h2>
-          <p className="product-not-found-message">
-            We had trouble loading the product. Please try again later.
-          </p>
-          <p className="product-not-found-suggestion product-error-details">
-            Error details: {error.toString()}
-          </p>
-          <Link to="/" className="product-not-found-link">
-            &larr; Back to All Products
-          </Link>
-        </div>
-      </div>
-    );
+  // Show loading state while fetching product data
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
-  // Display a styled message if the product is not found.
+  // Show error state if there's an error
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  // Show message if product is not found
   if (!product) {
-    return (
-      <div className="product-not-found-container">
-        <div className="product-not-found-content">
-          <h1 className="product-not-found-title">Oops!</h1>
-          <h2 className="product-not-found-subtitle">Product Not Found</h2>
-          <p className="product-not-found-message">
-            Sorry, we couldn't find a product with the ID{' '}
-            <code className="product-not-found-id">{id}</code>.
-          </p>
-          <p className="product-not-found-suggestion">
-            Maybe try searching for a different product?
-          </p>
-          <Link to="/" className="product-not-found-link">
-            &larr; Back to All Products
-          </Link>
-        </div>
-      </div>
-    );
+    return <div>Product not found</div>;
   }
 
   /**
-   * Handles adding the current product to the shopping cart.
-   * It dispatches the `addItem` action with the product's details.
+   * Handles the "Add to Cart" button click.
+   * Adds the item to the cart using the backend API.
    */
-  const handleAdd = () => {
-    dispatch(addItem({
-      id: product.id,
-      title: product.title,
-      price: product.price,
-      thumbnail: product.thumbnail,
-      quantity: 1,
-    }));
+  const handleAdd = async () => {
+    if (!isAuthenticated) {
+      if (onAddToCart) {
+        onAddToCart('Please login to add items to cart');
+      }
+      return;
+    }
 
-    // If an onAddToCart callback is provided, call it to show a notification.
-    if (onAddToCart) {
-      onAddToCart(`Added "${product.title}" to cart!`);
+    const success = await addToCart(product._id, 1);
+    if (success && onAddToCart) {
+      onAddToCart(`Added "${product.name}" to cart!`);
     }
   };
 
   return (
     <div className="product-detail">
-      <img src={product.thumbnail} alt={product.title} />
-      <h2>{product.title}</h2>
+      <img src={product.image} alt={product.name} />
+      <h2>{product.name}</h2>
       <p>{product.description}</p>
       <p className="product-price">${product.price}</p>
-      {/* Button to add the product to the cart */}
       <button onClick={handleAdd}>Add to Cart</button>
     </div>
   );
 }
-
 
 export default ProductDetail; 
